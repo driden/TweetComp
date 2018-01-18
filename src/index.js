@@ -1,5 +1,6 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import moment from 'moment'
 import './index.css';
 
 const Time = () => (<span className="time">3h ago</span>)
@@ -8,13 +9,14 @@ const RetweetButton = () => (<i className="fa fa-retweet retweet-button" />)
 const LikeButton = () => (<i className="fa fa-heart like-button" />)
 const MoreOptionsButton = () => (<i className="fa fa-ellipsis-h more-options-button" />)
 
-function Tweet() {
+function Tweet({ tweet }) {
     return (
         <div class="tweet">
-            <Avatar />
+            <Avatar hash={tweet.gravatar} />
             <div className="content">
-                <NameWithHandle /><Time />
-                <Message />
+                <NameWithHandle author={tweet.author} />
+                <Time time={tweet.timestamp} />
+                <Message text={tweet.Message} />
                 <div className="buttons">
                     <ReplyButton />
                     <RetweetButton />
@@ -26,28 +28,42 @@ function Tweet() {
     )
 }
 
-function Avatar() {
+function Avatar({ hash }) {
+    const url = `https://www.gravatar.com/avatar/${hash}`
     return (<img
-        src="https://www.gravatar.com/avatar/nothing"
+        src={url}
         className="avatar"
         alt="avatar" />
     )
 }
 
-function Message() {
+function Message(text) {
     return (
         <div className="message">
-            This is less than 140 characters.
+            {text}
         </div>
     )
 }
 
-function NameWithHandle() {
+function NameWithHandle(author) {
+    const { name, handle } = author
     return (
         <span>
-            <span className="name">Your Name</span>
-            <span className="handle">@yourhandle</span>
+            <span className="name">{name}</span>
+            <span className="handle">@{handle}</span>
         </span>
     )
+}
+
+const testTweet = {
+    message: "Something about cats",
+    gravatar: "xyz",
+    author: {
+        handle: "catperson",
+        name: "IAMA Cat Person"
+    },
+    like: 2,
+    retweets: 0,
+    timestamp: "2016-07-30 21:24:37"
 }
 ReactDOM.render(<Tweet />, document.querySelector('#root'))
