@@ -3,10 +3,41 @@ import ReactDOM from 'react-dom'
 import moment from 'moment'
 import './index.css';
 
-const Time = () => (<span className="time">3h ago</span>)
+const Time = ({time}) => {
+    const timePast = moment(time).fromNow()   
+    return (<span className="time">{timePast}</span>)
+}
 const ReplyButton = () => (<i className="fa fa-reply reply-button" />)
-const RetweetButton = () => (<i className="fa fa-retweet retweet-button" />)
-const LikeButton = () => (<i className="fa fa-heart like-button" />)
+
+function getRetweetCount(count) {
+    if(count > 0) {
+        return (
+            <span className="retweet-count">
+            {count}
+            </span>
+        )
+    } else {
+      return null
+    }
+}
+
+const RetweetButton = ({count}) => {
+    return (
+        <span className="retweet-button">
+            <i className="fa fa-retweet" />
+            {getRetweetCount(count)}
+        </span>        
+    )
+}
+const LikeButton = ({count}) => (
+    <span className="like-button">
+        <i className="fa fa-heart"/>
+            {count > 0 &&
+                <span className="like-count">
+                    {count}
+                </span>}
+    </span>
+)
 const MoreOptionsButton = () => (<i className="fa fa-ellipsis-h more-options-button" />)
 
 function Tweet({ tweet }) {
@@ -16,11 +47,11 @@ function Tweet({ tweet }) {
             <div className="content">
                 <NameWithHandle author={tweet.author} />
                 <Time time={tweet.timestamp} />
-                <Message text={tweet.Message} />
+                <Message text={tweet.message} />
                 <div className="buttons">
                     <ReplyButton />
-                    <RetweetButton />
-                    <LikeButton />
+                    <RetweetButton count ={tweet.retweets}/>
+                    <LikeButton count= {tweet.likes}/>
                     <MoreOptionsButton />
                 </div>
             </div>
@@ -37,15 +68,13 @@ function Avatar({ hash }) {
     )
 }
 
-function Message(text) {
+function Message({text}) {
     return (
-        <div className="message">
-            {text}
-        </div>
+        <div className="message">{text}</div>
     )
 }
 
-function NameWithHandle(author) {
+function NameWithHandle({author}) {
     const { name, handle } = author
     return (
         <span>
@@ -62,8 +91,8 @@ const testTweet = {
         handle: "catperson",
         name: "IAMA Cat Person"
     },
-    like: 2,
-    retweets: 0,
+    likes: 2,
+    retweets: 123,
     timestamp: "2016-07-30 21:24:37"
 }
-ReactDOM.render(<Tweet />, document.querySelector('#root'))
+ReactDOM.render(<Tweet tweet={testTweet} />, document.querySelector('#root'))
